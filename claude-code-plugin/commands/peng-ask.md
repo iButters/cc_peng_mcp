@@ -1,6 +1,6 @@
 ---
 title: peng-ask
-description: Zeigt die Rückfragen für eine bestimmte Session an.
+description: Shows the clarifying questions for a specific session.
 arguments: "<sessionId>"
 categories: ["prompt-engineering", "interactive"]
 ---

@@ -458,13 +458,25 @@ export async function autoOptimizeText(
       const sessionId = generateSessionId();
       
       // Store session for later use
+      // Validate and map complexity
+      const validComplexities = ['simple', 'moderate', 'complex'] as const;
+      const complexity = validComplexities.includes(detectedInfo.complexity as typeof validComplexities[number]) 
+        ? detectedInfo.complexity as 'simple' | 'moderate' | 'complex'
+        : 'moderate';
+      
+      // Validate and map taskType  
+      const validTaskTypes = ['code', 'debug', 'explain', 'refactor', 'test', 'architecture'] as const;
+      const taskType = validTaskTypes.includes(detectedInfo.taskType as typeof validTaskTypes[number])
+        ? detectedInfo.taskType as 'code' | 'debug' | 'explain' | 'refactor' | 'test' | 'architecture'
+        : 'code';
+
       createSession(sessionId, {
         originalPrompt: text,
         context: context ? [context] : [],
         refinements: [],
         language: detectedInfo.language,
-        complexity: detectedInfo.complexity as 'simple' | 'moderate' | 'complex',
-        taskType: detectedInfo.taskType as 'code' | 'debug' | 'explain' | 'refactor' | 'test' | 'architecture'
+        complexity,
+        taskType
       });
       
       return {
@@ -527,24 +539,31 @@ export function parseArguments(input: string): {
   let context: string | undefined;
   let interactive = false;
 
-  // Extract --language=value
-  const languageMatch = input.match(/--language=(\S+)/i);
-  if (languageMatch) {
-    language = languageMatch[1];
-    prompt = prompt.replace(languageMatch[0], '').trim();
+  // Extract all --language=value occurrences (use first one, remove all)
+  const languageMatches = input.matchAll(/--language=(\S+)/gi);
+  for (const match of languageMatches) {
+    if (!language) {
+      language = match[1];
+    }
+    prompt = prompt.replace(match[0], '').trim();
   }
 
-  // Extract --context=value (supports quoted values)
-  const contextMatch = input.match(/--context=["']([^"']+)["']|--context=(\S+)/i);
-  if (contextMatch) {
-    context = contextMatch[1] || contextMatch[2];
+  // Extract all --context=value occurrences (supports quoted values, use first one, remove all)
+  const contextRegex = /--context=["']([^"']+)["']|--context=(\S+)/gi;
+  let contextMatch;
+  while ((contextMatch = contextRegex.exec(input)) !== null) {
+    if (!context) {
+      context = contextMatch[1] || contextMatch[2];
+    }
     prompt = prompt.replace(contextMatch[0], '').trim();
   }
 
-  // Extract --interactive flag
-  if (/--interactive\b/i.test(input)) {
+  // Extract all --interactive flag occurrences
+  const interactiveRegex = /--interactive\b/gi;
+  let interactiveMatch;
+  while ((interactiveMatch = interactiveRegex.exec(input)) !== null) {
     interactive = true;
-    prompt = prompt.replace(/--interactive\b/i, '').trim();
+    prompt = prompt.replace(interactiveMatch[0], '').trim();
   }
 
   return { prompt, language, context, interactive };

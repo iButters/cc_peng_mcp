@@ -1,7 +1,7 @@
 ---
 title: peng-engineer
-description: Manuelle Prompt-Optimierung mit optionalen Parametern für Sprache, Kontext und interaktiven Modus.
-arguments: "<prompt> [--language=<sprache>] [--context=<kontext>] [--interactive]"
+description: Manual prompt optimization with optional parameters for language, context, and interactive mode.
+arguments: "<prompt> [--language=<language>] [--context=<context>] [--interactive]"
 categories: ["prompt-engineering", "manual", "optimization"]
 ---
 

@@ -1,7 +1,7 @@
 ---
 title: peng-answer
-description: Beantwortet die Rückfragen einer Session und generiert den finalen optimierten Prompt.
-arguments: "<sessionId> <antworten...>"
+description: Answers the clarifying questions of a session and generates the final optimized prompt.
+arguments: "<sessionId> <answers...>"
 categories: ["prompt-engineering", "interactive"]
 ---
 

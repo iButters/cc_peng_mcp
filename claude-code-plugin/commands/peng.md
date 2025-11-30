@@ -1,6 +1,6 @@
 ---
 title: peng
-description: Analysiert und optimiert den Prompt automatisch. Erkennt Sprache, Task-Typ, Komplexität. Bei Bedarf startet interaktiver Modus mit Rückfragen.
+description: Automatically analyzes and optimizes the prompt. Detects language, task type, complexity. Starts interactive mode with questions if needed.
 arguments: "<prompt>"
 categories: ["prompt-engineering", "optimization"]
 ---
