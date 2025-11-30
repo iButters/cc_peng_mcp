@@ -1,0 +1,20 @@
+{
+  "name": "peng-prompt-engineer",
+  "version": "1.0.0",
+  "description": "Intelligente Prompt-Optimierung für Claude Code mit interaktiver Verfeinerung und automatischer Analyse",
+  "author": {
+    "name": "Peng Prompt Engineer"
+  },
+  "license": "MIT",
+  "keywords": [
+    "prompt-engineering",
+    "optimization",
+    "interactive",
+    "claude-code"
+  ],
+  "category": "productivity",
+  "components": {
+    "commands": true,
+    "scripts": true
+  }
+}
