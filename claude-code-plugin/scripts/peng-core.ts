@@ -534,37 +534,58 @@ export function parseArguments(input: string): {
   context?: string;
   interactive: boolean;
 } {
-  let prompt = input;
   let language: string | undefined;
   let context: string | undefined;
   let interactive = false;
 
-  // Extract all --language=value occurrences (use first one, remove all)
-  const languageMatches = input.matchAll(/--language=(\S+)/gi);
-  for (const match of languageMatches) {
+  // Collect all argument matches and their positions
+  type MatchInfo = { start: number; end: number };
+  const removeSpans: MatchInfo[] = [];
+
+  // --language=VALUE
+  const languageRegex = /--language=(\S+)/gi;
+  let languageMatch;
+  while ((languageMatch = languageRegex.exec(input)) !== null) {
     if (!language) {
-      language = match[1];
+      language = languageMatch[1];
     }
-    prompt = prompt.replace(match[0], '').trim();
+    removeSpans.push({ start: languageMatch.index, end: languageMatch.index + languageMatch[0].length });
   }
 
-  // Extract all --context=value occurrences (supports quoted values, use first one, remove all)
+  // --context="..." or --context='...' or --context=VALUE
   const contextRegex = /--context=["']([^"']+)["']|--context=(\S+)/gi;
   let contextMatch;
   while ((contextMatch = contextRegex.exec(input)) !== null) {
     if (!context) {
       context = contextMatch[1] || contextMatch[2];
     }
-    prompt = prompt.replace(contextMatch[0], '').trim();
+    removeSpans.push({ start: contextMatch.index, end: contextMatch.index + contextMatch[0].length });
   }
 
-  // Extract all --interactive flag occurrences
+  // --interactive
   const interactiveRegex = /--interactive\b/gi;
   let interactiveMatch;
   while ((interactiveMatch = interactiveRegex.exec(input)) !== null) {
     interactive = true;
-    prompt = prompt.replace(interactiveMatch[0], '').trim();
+    removeSpans.push({ start: interactiveMatch.index, end: interactiveMatch.index + interactiveMatch[0].length });
   }
+
+  // Sort spans by start index
+  removeSpans.sort((a, b) => a.start - b.start);
+
+  // Rebuild prompt by skipping all argument spans
+  let prompt = '';
+  let lastIndex = 0;
+  for (const span of removeSpans) {
+    if (lastIndex < span.start) {
+      prompt += input.slice(lastIndex, span.start);
+    }
+    lastIndex = span.end;
+  }
+  if (lastIndex < input.length) {
+    prompt += input.slice(lastIndex);
+  }
+  prompt = prompt.trim().replace(/\s+/g, ' ');
 
   return { prompt, language, context, interactive };
 }

@@ -81,7 +81,7 @@ fix my React app performance issues
 2. What should the expected behavior be?
 3. What technology stack or programming language are you using?
 
-**Next Step:** Use /peng-answer <sessionId> to provide your answers.
+**Next Step:** Use /peng-answer abc123xyz456 to provide your answers.
 ```
 
 ### Refactor-Prompt
